@@ -1,0 +1,8 @@
+version: "1"
+services:
+  nginx:
+    container_name: greenlake-taskx
+    build:
+      context: ../..
+      dockerfile: ./docker/ubuntu/Dockerfile
+    image: ubuntu:latest
