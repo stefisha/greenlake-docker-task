@@ -31,16 +31,19 @@ WORKDIR /home/greenlake
 ################################
 
 # Download terraform for linux
-RUN wget https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
+#RUN wget https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
+RUN if [[ uname -m == "x86_64"]] ; then wget https://releases.hashicorp.com/terraform/0.11.11/terraform_1.5.2_linux_amd64.zip ; else wget https://releases.hashicorp.com/terraform/1.5.2/terraform_1.5.2_linux_arm64.zip ; fi
 
 # Unzip
-RUN unzip terraform_0.11.11_linux_amd64.zip
+RUN if [[ uname -m == "x86_64"]] ; then unzip terraform_1.5.2_linux_amd64.zip ; else unzip terraform_1.5.2_linux_arm64.zip ; fi
+#RUN unzip terraform_1.5.2_linux_arm64.zip
 # Move to local bin
 RUN mv terraform /usr/local/bin/
 # Check that it's installed
 RUN terraform --version 
 # Delete zip file
-RUN rm terraform_0.11.11_linux_amd64.zip
+#RUN rm terraform_0.11.11_linux_amd64.zip
+RUN if [[ uname -m == "x86_64"]] ; then unzip terraform_1.5.2_linux_amd64.zip; else unzip terraform_1.5.2_linux_arm64.zip; fi
 
 ################################
 # Install python
@@ -84,14 +87,13 @@ pip3 install ansible
 ################################
 
 # Get kubernetes
-RUN curl -sSL "http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/amd64/kubectl" > /usr/bin/kubectl
+RUN if [[ uname -m == "x86_64"]] ; then curl -sSL "http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/amd64/kubectl" > /usr/bin/kubectl ; else curl -sSL "http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/arm64/kubectl" > /usr/bin/kubectl ; fi
 # Change priveliges
 RUN chmod +x /usr/bin/kubectl
 # Setup simple cluster configuration
-RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
-kubectl config set-context test-doc --cluster=test-doc && \
-kubectl config use-context test-doc
-
+# RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
+# kubectl config set-context test-doc --cluster=test-doc && \
+# kubectl config use-context test-doc
 
 # switch to non-root user
 USER greenlake
