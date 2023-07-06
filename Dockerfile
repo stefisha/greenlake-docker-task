@@ -1,4 +1,4 @@
-# Pull base image.
+# Pull base image
 FROM ubuntu:latest
 
 RUN \
@@ -83,9 +83,17 @@ pip3 install ansible
 # Setup Kubernetes 
 ################################
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
-#RUN chmod +x kubectl \
-#RUN mv kubectl $HOME/bin
+# Get kubernetes
+RUN curl -sSL "http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/amd64/kubectl" > /usr/bin/kubectl
+# Change priveliges
+RUN chmod +x /usr/bin/kubectl
+# Setup simple cluster configuration
+RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
+kubectl config set-context test-doc --cluster=test-doc && \
+kubectl config use-context test-doc
+
 
 # switch to non-root user
 USER greenlake
+# Set command when container starts
+CMD ["/bin/bash"]
