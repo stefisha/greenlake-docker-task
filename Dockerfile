@@ -93,9 +93,17 @@ pip3 install ansible
 # Get kubernetes
 RUN curl -sSL "http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/${ARCH}/kubectl" > /usr/bin/kubectl 
 # Setup simple cluster configuration
-#RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
-#kubectl config set-context test-doc --cluster=test-doc && \
-#kubectl config use-context test-doc
+RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
+kubectl config set-context test-doc --cluster=test-doc && \
+kubectl config use-context test-doc
+
+# Alternative, only for amd64
+# RUN curl -LO "https://dl.k8s.io/release/v1.24.7/bin/linux/${ARCH}/kubectl" 
+# RUN curl -LO "https://dl.k8s.io/v1.24.7/bin/linux/${ARCH}/kubectl.sha256"
+# # check version
+# RUN echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+# # add privelage
+# RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 # switch to non-root user
 USER greenlake
