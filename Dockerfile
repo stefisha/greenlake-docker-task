@@ -80,7 +80,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN \
 # kerberos
-#apt install krb5-user -y && \ 
+apt install krb5-user -y && \ 
 # pywinrm to connect remote
 pip3 install pywinrm && \
 # ansible
