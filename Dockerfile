@@ -30,52 +30,53 @@ RUN useradd -ms /bin/bash greenlake
 # Define home dir
 WORKDIR /home/greenlake
 # Set ownership
-#RUN chown -R greenlake:greenlake /home/greenlake
+RUN chown -R greenlake:greenlake /home/greenlake
 
 ################################
 # Install Terraform
 ################################
 
 # Download terraform for linux
-RUN wget https://releases.hashicorp.com/terraform/1.5.2/terraform_1.5.2_linux_${ARCH}.zip
-
+RUN \
+wget https://releases.hashicorp.com/terraform/1.5.2/terraform_1.5.2_linux_${ARCH}.zip \
 # Unzip
-RUN unzip terraform_1.5.2_linux_${ARCH}.zip 
+unzip terraform_1.5.2_linux_${ARCH}.zip \
 # Move to local bin
-RUN mv terraform /usr/local/bin/
+mv terraform /usr/local/bin/ \
 # Check that it's installed
-RUN terraform --version 
+terraform --version \
 # Delete zip file
-RUN rm terraform_1.5.2_linux_${ARCH}.zip
+rm terraform_1.5.2_linux_${ARCH}.zip
 
 ################################
 # Install python
 ################################
 
 RUN apt-get install -y python3-pip
-#RUN ln -s /usr/bin/python3 python
+RUN ln -s /usr/bin/python3 python
+# upgrade pip
 RUN pip3 install --upgrade pip
+# check python version
 RUN python3 -V
+# check pip version
 RUN pip --version
 
 ################################
 # Install AWS CLI
 ################################
-RUN pip install awscli --upgrade --user
 
+# install aws clu with pip
+RUN pip install awscli --upgrade --user
 # add aws cli location to path
 ENV PATH=~/.local/bin:$PATH
-
-# Adds local templates directory and contents in /usr/local/terrafrom-templates
-#ADD templates /usr/local/bin/templates
-
+# create fodler for storing credentials
 RUN mkdir ~/.aws && touch ~/.aws/credentials
 
 ################################
 # Install Ansible
 ################################
 
-#ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN \
 # kerberos
