@@ -5,7 +5,7 @@ FROM ubuntu:latest
 # Set build version
 ################################
 
-RUN if [[ uname -m == "x86_64"]] ; then ARCH="amd64"; elif [[ uname -m == "aarch64"]]; then ARCH="arm64"; else echo "unknown arch for this image" exit 1; fi
+RUN if [[ uname -m = "x86_64"]] ; then ARCH="amd64"; elif [[ uname -m = "aarch64"]]; then ARCH="arm64"; else echo "unknown arch for this image" exit 1; fi
 
 RUN \
 # Update
@@ -93,9 +93,9 @@ pip3 install ansible
 # Get kubernetes
 RUN curl -sSL "http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/${ARCH}/kubectl" > /usr/bin/kubectl 
 # Setup simple cluster configuration
-RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
-kubectl config set-context test-doc --cluster=test-doc && \
-kubectl config use-context test-doc
+# RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
+# kubectl config set-context test-doc --cluster=test-doc && \
+# kubectl config use-context test-doc
 
 # Alternative, only for amd64
 # RUN curl -LO "https://dl.k8s.io/release/v1.24.7/bin/linux/${ARCH}/kubectl" 
