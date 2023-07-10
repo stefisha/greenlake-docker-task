@@ -1,25 +1,8 @@
 # Pull base image
 FROM ubuntu:latest
 
-################################
-# Set build version
-################################
-
-RUN if [[ uname -m = "x86_64"]] ; then ARCH="amd64"; elif [[ uname -m = "aarch64"]]; then ARCH="arm64"; else echo "unknown arch for this image" exit 1; fi
-
-RUN \
-# Update
-apt-get update -y && \
-# Install Unzip
-apt-get install unzip -y && \
-# need wget
-apt-get install wget -y && \
-# vim
-apt-get install vim -y && \
-# curl
-apt-get install curl -y && \
-# git
-apt-get install git -y
+RUN apt-get update -y && \
+    apt-get install unzip wget vim curl git -y
 
 ################################
 # Create non-root user
@@ -32,21 +15,15 @@ WORKDIR /home/greenlake
 # Set ownership
 RUN chown -R greenlake:greenlake /home/greenlake
 
-################################
-# Install Terraform
-################################
+RUN uname -m
+# Terraform and kubectl
+RUN if [ $(uname -m) = "x86_64" ]; then ARCH="amd64"; elif [ $(uname -m) = "aarch64" ]; then ARCH="arm64"; else echo "unknown arch for this image" && exit 1; fi \
+    && wget https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+    && wget https://releases.hashicorp.com/terraform/1.5.2/terraform_1.5.2_linux_${ARCH}.zip \
+    && unzip terraform_1.5.2_linux_${ARCH}.zip \
+    && mv terraform kubectl /usr/local/bin/ \
+    && rm terraform_1.5.2_linux_${ARCH}.zip
 
-# Download terraform for linux
-RUN \
-wget https://releases.hashicorp.com/terraform/1.5.2/terraform_1.5.2_linux_${ARCH}.zip \
-# Unzip
-unzip terraform_1.5.2_linux_${ARCH}.zip \
-# Move to local bin
-mv terraform /usr/local/bin/ \
-# Check that it's installed
-terraform --version \
-# Delete zip file
-rm terraform_1.5.2_linux_${ARCH}.zip
 
 ################################
 # Install python
@@ -90,8 +67,6 @@ pip3 install ansible
 # Setup Kubernetes 
 ################################
 
-# Get kubernetes
-RUN curl -sSL "http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/${ARCH}/kubectl" > /usr/bin/kubectl 
 # Setup simple cluster configuration
 # RUN kubectl config set-cluster test-doc --server=http://localhost:8080 && \
 # kubectl config set-context test-doc --cluster=test-doc && \
