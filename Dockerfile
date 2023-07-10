@@ -1,8 +1,10 @@
 # Pull base image
 FROM ubuntu:latest
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update -y && \
-    apt-get install unzip wget vim curl git -y
+    apt-get install -y unzip wget vim curl git python3-pip ansible
 
 ################################
 # Create non-root user
@@ -15,7 +17,6 @@ WORKDIR /home/greenlake
 # Set ownership
 RUN chown -R greenlake:greenlake /home/greenlake
 
-RUN uname -m
 # Terraform and kubectl
 RUN if [ $(uname -m) = "x86_64" ]; then ARCH="amd64"; elif [ $(uname -m) = "aarch64" ]; then ARCH="arm64"; else echo "unknown arch for this image" && exit 1; fi \
     && wget https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
@@ -23,20 +24,6 @@ RUN if [ $(uname -m) = "x86_64" ]; then ARCH="amd64"; elif [ $(uname -m) = "aarc
     && unzip terraform_1.5.2_linux_${ARCH}.zip \
     && mv terraform kubectl /usr/local/bin/ \
     && rm terraform_1.5.2_linux_${ARCH}.zip
-
-
-################################
-# Install python
-################################
-
-RUN apt-get install -y python3-pip
-RUN ln -s /usr/bin/python3 python
-# upgrade pip
-RUN pip3 install --upgrade pip
-# check python version
-RUN python3 -V
-# check pip version
-RUN pip --version
 
 ################################
 # Install AWS CLI
@@ -52,8 +39,6 @@ RUN mkdir ~/.aws && touch ~/.aws/credentials
 ################################
 # Install Ansible
 ################################
-
-ENV DEBIAN_FRONTEND=noninteractive
 
 RUN \
 # kerberos
