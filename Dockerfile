@@ -3,8 +3,8 @@ FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update -y && \
-    apt-get install -y unzip wget vim curl git python3-pip ansible
+RUN apt-get update -y \
+    && apt-get install -y unzip wget vim curl git python3-pip ansible
 
 ################################
 # Create non-root user
