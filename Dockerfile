@@ -44,9 +44,7 @@ RUN \
 # kerberos
 apt install krb5-user -y && \ 
 # pywinrm to connect remote
-pip3 install pywinrm && \
-# ansible
-pip3 install ansible
+pip3 install pywinrm
 
 ################################
 # Setup Kubernetes 
