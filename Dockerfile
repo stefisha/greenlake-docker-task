@@ -9,7 +9,6 @@ RUN apt-get update -y \
 ################################
 # Create non-root user
 ################################
-
 # Create non-root user "greenlake"
 RUN useradd -ms /bin/bash greenlake
 # Define home dir
