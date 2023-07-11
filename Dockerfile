@@ -18,7 +18,7 @@ RUN chown -R greenlake:greenlake /home/greenlake
 
 # Terraform and kubectl
 RUN if [ $(uname -m) = "x86_64" ]; then ARCH="amd64"; elif [ $(uname -m) = "aarch64" ]; then ARCH="arm64"; else echo "unknown arch for this image" && exit 1; fi \
-    && wget https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+    && wget https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/${ARCH}/kubectl \
     && wget https://releases.hashicorp.com/terraform/1.5.2/terraform_1.5.2_linux_${ARCH}.zip \
     && unzip terraform_1.5.2_linux_${ARCH}.zip \
     && mv terraform kubectl /usr/local/bin/ \
